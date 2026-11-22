@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Repayment Portal</title>
+  <style>
+    :root {
+      --bg-page: #f3f5f8;
+      --green-card: #138a27;
+      --green-pill: #0e6b1e;
+      --timer-bg: #f6e7c1;
+      --timer-text: #c93b2b;
+      --blue-primary: #1a66ff;
+      --blue-hover: #1453d1;
+      --bkash-pink: #e2136e;
+      --text-dark: #1f2937;
+      --text-muted: #6b7280;
+      --border-light: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans Bengali", Arial, sans-serif;
+      background-color: var(--bg-page);
+      color: var(--text-dark);
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 16px 12px 48px;
+    }
+
+    .app-wrapper {
+      width: 100%;
+      max-width: 440px;
+    }
+
+    /* Top Green Header Card */
+    .top-card {
+      background-color: var(--green-card);
+      color: #ffffff;
+      border-radius: 16px;
+      padding: 18px 20px 24px;
+      box-shadow: 0 4px 14px rgba(19, 138, 39, 0.18);
+    }
+
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    /* Language Toggle Pill */
+    .lang-toggle {
+      display: inline-flex;
+      background: var(--green-pill);
+      border-radius: 20px;
+      padding: 3px;
+      gap: 2px;
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .lang-btn.active {
+      background: rgba(255, 255, 255, 0.22);
+      color: #ffffff;
+    }
+
+    /* Countdown Pill */
+    .timer-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background-color: var(--timer-bg);
+      color: var(--timer-text);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .timer-pill svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .repay-label {
+      font-size: 13px;
+      opacity: 0.92;
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .repay-amount {
+      font-size: 32px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    /* Warning Notice */
+    .notice-line {
+      font-size: 13px;
+      color: #374151;
+      margin: 14px 4px;
+      font-weight: 500;
+    }
+
+    .notice-line .time-highlight {
+      color: #e11d48;
+      font-weight: 700;
+    }
+
+    /* White Main Card */
+    .white-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px 18px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+      margin-bottom: 20px;
+    }
+
+    /* Stage 1: Select Account Button */
+    .select-title {
+      text-align: center;
+      font-size: 14.5px;
+      font-weight: 600;
+      color: #1f2937;
+      margin-bottom: 14px;
+    }
+
+    .bkash-select-btn {
+      width: 100%;
+      background: #ffffff;
+      border: 1.5px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .bkash-select-btn:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+    }
+
+    .bkash-brand-text {
+      color: var(--bkash-pink);
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    /* Stage 3: Full Payment & Upload Form */
+    .form-brand-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .step-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+
+    .step-circle {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--blue-primary);
+      color: var(--blue-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .pink-highlight {
+      color: var(--bkash-pink);
+      font-weight: 700;
+    }
+
+    .red-required {
+      color: #e11d48;
+      font-weight: 600;
+    }
+
+    .account-copy-box {
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 18px;
+      background: #ffffff;
+    }
+
+    .acc-sub-label {
+      font-size: 11.5px;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .acc-number-display {
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      letter-spacing: 0.3px;
+    }
+
+    .copy-btn {
+      background-color: var(--blue-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover {
+      background-color: var(--blue-hover);
+    }
+
+    .trx-input {
+      width: 100%;
+      background: #f3f4f6;
+      border: 1.5px solid transparent;
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      color: #111827;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .trx-input:focus {
+      background: #ffffff;
+      border-color: var(--blue-primary);
+    }
+
+    .trx-error {
+      color: #e11d48;
+      font-size: 12px;
+      margin-top: 6px;
+      display: none;
+      font-weight: 500;
+    }
+
+    .upload-section-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #1f2937;
+      margin: 16px 0 10px;
+      line-height: 1.4;
+    }
+
+    .upload-grid {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .upload-box {
+      width: 74px;
+      height: 74px;
+      border: 1.5px dashed #d1d5db;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: #f9fafb;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+
+    .upload-box:hover {
+      border-color: var(--blue-primary);
+    }
+
+    .upload-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .plus-icon {
+      font-size: 24px;
+      color: var(--blue-primary);
+      font-weight: 400;
+    }
+
+    .example-box {
+      width: 74px;
+      height: 74px;
+      border: 1px solid #e5e7eb;
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      background: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .example-mini-ui {
+      width: 100%;
+      height: 100%;
+      background: #fdf2f8;
+      border-radius: 6px;
+      padding: 4px;
+      font-size: 6px;
+      color: #333;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .example-badge {
+      position: absolute;
+      bottom: 4px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(107, 114, 128, 0.85);
+      color: #ffffff;
+      font-size: 9px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 8px;
+      letter-spacing: 0.3px;
+    }
+
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 24px;
+      font-size: 14.5px;
+      font-weight: 600;
+      background: #d1d5db;
+      color: #ffffff;
+      cursor: not-allowed;
+      transition: background 0.2s ease;
+    }
+
+    .submit-btn.ready {
+      background: var(--blue-primary);
+      cursor: pointer;
+    }
+
+    .submit-btn.ready:hover {
+      background: var(--blue-hover);
+    }
+
+    /* Repayment Process Instructions */
+    .process-section {
+      padding: 0 4px;
+    }
+
+    .process-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #111827;
+      margin-bottom: 10px;
+    }
+
+    .process-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .process-list li {
+      font-size: 12.5px;
+      color: #6b7280;
+      line-height: 1.45;
+      display: flex;
+      gap: 6px;
+    }
+
+    .process-num {
+      color: var(--blue-primary);
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .orange-highlight {
+      color: #ea580c;
+      font-weight: 700;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 100;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .popup-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 350px;
+      border-radius: 16px;
+      padding: 22px 20px;
+      text-align: center;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+      animation: popIn 0.2s ease-out;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(0.94); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .popup-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+      margin: 6px 0 8px;
+    }
+
+    .popup-sub {
+      font-size: 12px;
+      color: #6b7280;
+      margin-bottom: 10px;
+    }
+
+    .masked-box {
+      background: #f3f4f6;
+      border-radius: 10px;
+      padding: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #111827;
+      letter-spacing: 0.5px;
+      margin-bottom: 12px;
+    }
+
+    .popup-note {
+      font-size: 12px;
+      color: #6b7280;
+      line-height: 1.4;
+      margin-bottom: 16px;
+    }
+
+    .popup-primary-btn {
+      width: 100%;
+      background: var(--blue-primary);
+      color: #ffffff;
+      border: none;
+      border-radius: 22px;
+      padding: 11px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .popup-link-btn {
+      display: inline-block;
+      margin-top: 12px;
+      background: none;
+      border: none;
+      color: #4b5563;
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .receipt-preview-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 340px;
+      border-radius: 16px;
+      padding: 18px;
+      position: relative;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .close-circle-btn {
+      position: absolute;
+      top: -12px;
+      right: -12px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #4b5563;
+      color: #ffffff;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mock-bkash-receipt {
+      border: 1px solid #f3f4f6;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: left;
+      font-size: 12px;
+    }
+
+    .mock-bkash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .mock-bkash-header strong.pink { color: var(--bkash-pink); }
+    .mock-bkash-header strong.green { color: #16a34a; }
+
+    .mock-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      border-top: 1px solid #f3f4f6;
+      border-bottom: 1px solid #f3f4f6;
+      padding: 12px 0;
+      margin: 12px 0;
+    }
+
+    .mock-grid-label {
+      font-size: 10.5px;
+      color: #9ca3af;
+      margin-bottom: 2px;
+    }
+
+    .mock-grid-val {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1f2937;
+    }
+
+    /* Final Green Success Modal (Exact Screenshot Match) */
+    .green-success-card {
+      background-color: #1b7a3e;
+      color: #ffffff;
+      width: 100%;
+      max-width: 380px;
+      border-radius: 16px;
+      padding: 28px 22px;
+      text-align: center;
+      box-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+      animation: popIn 0.25s ease-out;
+    }
+
+    .check-ring {
+      width: 54px;
+      height: 54px;
+      border: 2.5px solid #ffffff;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .green-success-title {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .green-success-desc {
+      font-size: 13.5px;
+      line-height: 1.55;
+      opacity: 0.95;
+      margin-bottom: 22px;
+    }
+
+    .green-success-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 13px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.22);
+      font-size: 14.5px;
+    }
+
+    .green-success-row span:last-child {
+      font-weight: 700;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-wrapper">
+  <!-- TOP GREEN HEADER -->
+  <div class="top-card">
+    <div class="top-bar">
+      <div class="lang-toggle">
+        <button class="lang-btn active" id="btnEn" onclick="setLanguage('en')">English</button>
+        <button class="lang-btn" id="btnBn" onclick="setLanguage('bn')">বাংলা</button>
+      </div>
+      <div class="timer-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+          <circle cx="12" cy="12" r="9"></circle>
+          <polyline points="12 7 12 12 15 14"></polyline>
+        </svg>
+        <span id="headerTimer">12:34</span>
+      </div>
+    </div>
+
+    <div class="repay-label" id="lblRepayAmount">Repayment Amount</div>
+    <div class="repay-amount" id="displayAmount">BDT 6,000</div>
+  </div>
+
+  <!-- RED TIME WARNING LINE -->
+  <div class="notice-line" id="noticeLine">
+    Please pay and upload your payment receipt within <span class="time-highlight" id="inlineTimer">12:34</span>.
+  </div>
+
+  <!-- STAGE 1 CARD -->
+  <div class="white-card" id="stage1Card">
+    <div class="select-title" id="lblClickView">Click to view repayment account</div>
+    <button class="bkash-select-btn" onclick="openSelectedModal()">
+      <svg width="24" height="24" viewBox="0 0 40 40" fill="none">
+        <path d="M18.5 7L11 19.5L21 22.5L18.5 7Z" fill="#E2136E"/>
+        <path d="M18.5 7L27.5 14L21 22.5L18.5 7Z" fill="#D11164"/>
+        <path d="M21 22.5L29 21L23.5 31L21 22.5Z" fill="#E2136E"/>
+        <path d="M11 19.5L16.5 29L21 22.5L11 19.5Z" fill="#B80E57"/>
+        <path d="M27.5 14L33 15.5L29 21L27.5 14Z" fill="#9E0B4A"/>
+      </svg>
+      <span class="bkash-brand-text">bKash</span>
+    </button>
+  </div>
+
+  <!-- STAGE 3 CARD -->
+  <div class="white-card hidden" id="stage3Card">
+    <div class="form-brand-header">
+      <svg width="24" height="24" viewBox="0 0 40 40" fill="none">
+        <path d="M18.5 7L11 19.5L21 22.5L18.5 7Z" fill="#E2136E"/>
+        <path d="M18.5 7L27.5 14L21 22.5L18.5 7Z" fill="#D11164"/>
+        <path d="M21 22.5L29 21L23.5 31L21 22.5Z" fill="#E2136E"/>
+        <path d="M11 19.5L16.5 29L21 22.5L11 19.5Z" fill="#B80E57"/>
+        <path d="M27.5 14L33 15.5L29 21L27.5 14Z" fill="#9E0B4A"/>
+      </svg>
+      <span class="bkash-brand-text">bKash</span>
+    </div>
+
+    <!-- Step 1 -->
+    <div class="step-row">
+      <span class="step-circle">1</span>
+      <span id="lblStep1">This account is only for repayment <span class="pink-highlight">bKash Send Money Only</span></span>
+    </div>
+
+    <div class="account-copy-box">
+      <div>
+        <div class="acc-sub-label" id="lblAccSub">Repayment Account <span class="pink-highlight">(bKash Send Money Only)</span></div>
+        <div class="acc-number-display" id="fullAccountNumber">01648068448</div>
+      </div>
+      <button class="copy-btn" id="btnCopy" onclick="copyFullAccount()">Copy</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step-row">
+      <span class="step-circle">2</span>
+      <span id="lblStep2">Enter the TrxID <span class="red-required">(Required)</span></span>
+    </div>
+
+    <input
+      type="text"
+      id="trxInput"
+      class="trx-input"
+      placeholder="Please enter the TrxID!"
+      maxlength="10"
+      oninput="validateForm()"
+    />
+    <div class="trx-error" id="trxError">Invalid TrxID! Must be 10 characters with uppercase letters & numbers (e.g. 7N83H3R3A5).</div>
+
+    <div class="upload-section-label" id="lblUploadDesc">
+      Please provide a screenshot or photo of the transfer record shown below
+    </div>
+
+    <div class="upload-grid">
+      <label class="upload-box" for="receiptFile" id="uploadTrigger">
+        <span class="plus-icon" id="plusIcon">+</span>
+        <img id="previewImg" class="hidden" alt="Uploaded Receipt" />
+      </label>
+      <input type="file" id="receiptFile" accept="image/*" class="hidden" onchange="handleFileUpload(event)" />
+
+      <div class="example-box" onclick="openExampleModal()" title="View Sample Receipt">
+        <div class="example-mini-ui">
+          <div style="color:#e2136e;font-weight:700;">bKash ✓</div>
+          <div style="background:#fff;padding:2px;border-radius:3px;">TrxID: 7N83H3R3A5</div>
+          <div style="background:#e2136e;color:#fff;border-radius:3px;padding:1px;">Back to Home</div>
+        </div>
+        <span class="example-badge">EXAMPLE</span>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="btnSubmit" disabled onclick="submitRepayment()">Submit</button>
+  </div>
+
+  <!-- REPAYMENT PROCESS INSTRUCTIONS -->
+  <div class="process-section">
+    <div class="process-title" id="lblProcessTitle">Repayment Process</div>
+    <ul class="process-list" id="processList">
+      <li><span class="process-num">1.</span><span>Copy the repayment account number and make the payment.</span></li>
+      <li><span class="process-num">2.</span><span>Log in to your mobile banking app.</span></li>
+      <li><span class="process-num">3.</span><span>Confirm whether to send the payment via <span class="orange-highlight">"bKash Send Money Only"</span>, then enter the account number and amount above.</span></li>
+      <li><span class="process-num">4.</span><span>Save your TrxID and transfer receipt/screenshot, then enter and upload them here.</span></li>
+      <li><span class="process-num">5.</span><span>Confirm the transaction and wait for your loan status to be updated.</span></li>
+    </ul>
+  </div>
+</div>
+
+<!-- POPUP 1 -->
+<div class="modal-backdrop" id="selectedModal">
+  <div class="popup-card">
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+      <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+        <path d="M18.5 7L11 19.5L21 22.5L18.5 7Z" fill="#E2136E"/>
+        <path d="M18.5 7L27.5 14L21 22.5L18.5 7Z" fill="#D11164"/>
+        <path d="M21 22.5L29 21L23.5 31L21 22.5Z" fill="#E2136E"/>
+        <path d="M11 19.5L16.5 29L21 22.5L11 19.5Z" fill="#B80E57"/>
+      </svg>
+      <span class="bkash-brand-text">bKash</span>
+    </div>
+    <div class="popup-title" id="modal1Title">selected for repayment.</div>
+    <div class="popup-sub" id="modal1Sub">Repayment Account</div>
+    <div class="masked-box" id="maskedAccountDisplay">016***68448</div>
+    <div class="popup-note" id="modal1Note">Account valid for 13 min only. Copy, pay, then upload your TrxID.</div>
+    <button class="popup-primary-btn" id="btnGoToRepay" onclick="goToRepay()">Go to Repay</button>
+    <button class="popup-link-btn" id="btnReuploadProof" onclick="openReuploadModal()">Re-upload proof</button>
+  </div>
+</div>
+
+<!-- POPUP 2 -->
+<div class="modal-backdrop" id="copySuccessModal">
+  <div class="popup-card">
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;">
+      <svg width="22" height="22" viewBox="0 0 40 40" fill="none">
+        <path d="M18.5 7L11 19.5L21 22.5L18.5 7Z" fill="#E2136E"/>
+        <path d="M18.5 7L27.5 14L21 22.5L18.5 7Z" fill="#D11164"/>
+        <path d="M21 22.5L29 21L23.5 31L21 22.5Z" fill="#E2136E"/>
+        <path d="M11 19.5L16.5 29L21 22.5L11 19.5Z" fill="#B80E57"/>
+      </svg>
+      <span class="bkash-brand-text">bKash</span>
+    </div>
+    <div class="popup-sub" style="margin-top:8px;" id="copyModalSub">Repayment Account</div>
+    <div class="masked-box" id="copyModalNumber">01648068448</div>
+    <div class="popup-note" id="copyModalNote">Please select <span class="pink-highlight">bKash Send Money Only</span> to repayment</div>
+    <button class="popup-primary-btn" onclick="closeCopyModal()">OK</button>
+  </div>
+</div>
+
+<!-- POPUP 3 -->
+<div class="modal-backdrop" id="reuploadModal">
+  <div class="popup-card">
+    <div class="popup-title" style="margin-bottom:4px;">Upload Receipt</div>
+    <div class="popup-sub">Enter the TrxID <span class="red-required">(Required)</span><br>Please select <span class="pink-highlight">bKash Send Money Only</span> for repayment</div>
+    <input type="text" id="reuploadTrx" class="trx-input" placeholder="Please enter the TrxID!" maxlength="10" oninput="validateReupload()" />
+    <div style="text-align:left;font-size:12px;font-weight:600;margin:12px 0 8px;">Proof of Payment</div>
+    <div class="upload-grid" style="margin-bottom:14px;">
+      <label class="upload-box" for="reuploadFile">
+        <span class="plus-icon" id="reuploadPlus">+</span>
+        <img id="reuploadPreview" class="hidden" alt="Proof" />
+      </label>
+      <input type="file" id="reuploadFile" accept="image/*" class="hidden" onchange="handleReuploadFile(event)" />
+      <div class="example-box" onclick="openExampleModal()">
+        <div class="example-mini-ui">
+          <div style="color:#e2136e;font-weight:700;">bKash ✓</div>
+          <div style="background:#fff;padding:2px;border-radius:3px;">TrxID: 7N83H3R3A5</div>
+          <div style="background:#e2136e;color:#fff;border-radius:3px;padding:1px;">Back to Home</div>
+        </div>
+        <span class="example-badge">EXAMPLE</span>
+      </div>
+    </div>
+    <button class="submit-btn" id="btnReuploadSubmit" disabled onclick="submitReupload()">Re-upload proof</button>
+    <button class="popup-link-btn" onclick="closeReuploadModal()">Back</button>
+  </div>
+</div>
+
+<!-- POPUP 4 -->
+<div class="modal-backdrop" id="exampleModal" onclick="closeExampleModal()">
+  <div class="receipt-preview-card" onclick="event.stopPropagation()">
+    <button class="close-circle-btn" onclick="closeExampleModal()">✕</button>
+    <div class="mock-bkash-receipt">
+      <div class="mock-bkash-header">
+        <span>Your <strong class="pink">bKash Send Money</strong> is <strong class="green">successful</strong></span>
+        <span style="color:#16a34a;font-size:18px;">✓</span>
+      </div>
+      <div class="mock-grid">
+        <div>
+          <div class="mock-grid-label">Time</div>
+          <div class="mock-grid-val">03:16pm 28/01/26</div>
+        </div>
+        <div>
+          <div class="mock-grid-label">Transaction ID</div>
+          <div class="mock-grid-val">7N83H3R3A5</div>
+        </div>
+        <div>
+          <div class="mock-grid-label">Total</div>
+          <div class="mock-grid-val" id="sampleReceiptAmount">৳ 6,000.00</div>
+        </div>
+        <div>
+          <div class="mock-grid-label">New Balance</div>
+          <div class="mock-grid-val">•••••••• 👁</div>
+        </div>
+      </div>
+      <div style="background:#e2136e;color:#fff;padding:10px 12px;border-radius:8px;font-weight:600;display:flex;justify-content:space-between;">
+        <span>Back to Home</span>
+        <span>→</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- POPUP 5: Final Green Success Modal (Exact Screenshot Match) -->
+<div class="modal-backdrop" id="finalSuccessModal">
+  <div class="green-success-card">
+    <div class="check-ring">✓</div>
+    <div class="green-success-title">পেমেন্ট সফল হয়েছে</div>
+    <div class="green-success-desc">
+      আপনি পেমেন্ট সম্পন্ন করেছেন, অনুগ্রহ করে আবার বিক্রেতার কাছে ফিরে গিয়ে নিশ্চিত করুন।
+    </div>
+    <div class="green-success-row">
+      <span>পেমেন্টের পরিমাণ</span>
+      <span id="finalModalAmount">৳ 6,000.00</span>
+    </div>
+    <div class="green-success-row">
+      <span>পেমেন্ট চ্যানেল</span>
+      <span>bKash</span>
+    </div>
+  </div>
+</div>
+
+<script>
+  // =========================================================================
+  // 🎨 CONFIGURATION SECTION
+  // =========================================================================
+  const PORTAL_CONFIG = {
+    bkashNumber: "01648068448",
+    amount: 6000,
+    timerMinutes: 12,
+    timerSeconds: 34
+  };
+  // =========================================================================
+
+  let currentLang = "en";
+  let totalSeconds = (PORTAL_CONFIG.timerMinutes * 60) + PORTAL_CONFIG.timerSeconds;
+  let uploadedReceiptData = null;
+  let reuploadReceiptData = null;
+
+  function formatCurrency(num) {
+    return Number(num).toLocaleString("en-US");
+  }
+
+  function getMaskedNumber(num) {
+    if (num.length < 7) return num;
+    return num.slice(0, 3) + "***" + num.slice(-5);
+  }
+
+  function initPortal() {
+    const formattedAmt = formatCurrency(PORTAL_CONFIG.amount);
+    document.getElementById("displayAmount").textContent = `BDT ${formattedAmt}`;
+    document.getElementById("fullAccountNumber").textContent = PORTAL_CONFIG.bkashNumber;
+    document.getElementById("maskedAccountDisplay").textContent = getMaskedNumber(PORTAL_CONFIG.bkashNumber);
+    document.getElementById("copyModalNumber").textContent = PORTAL_CONFIG.bkashNumber;
+    document.getElementById("finalModalAmount").textContent = `৳ ${Number(PORTAL_CONFIG.amount).toFixed(2)}`;
+    document.getElementById("sampleReceiptAmount").textContent = `৳ ${Number(PORTAL_CONFIG.amount).toFixed(2)}`;
+    updateTimerDisplay();
+  }
+
+  function updateTimerDisplay() {
+    const mins = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+    const secs = String(totalSeconds % 60).padStart(2, "0");
+    const timeStr = `${mins}:${secs}`;
+    document.getElementById("headerTimer").textContent = timeStr;
+    const inlineEl = document.getElementById("inlineTimer");
+    if (inlineEl) inlineEl.textContent = timeStr;
+  }
+
+  setInterval(() => {
+    if (totalSeconds > 0) {
+      totalSeconds--;
+      updateTimerDisplay();
+    }
+  }, 1000);
+
+  function setLanguage(lang) {
+    currentLang = lang;
+    document.getElementById("btnEn").classList.toggle("active", lang === "en");
+    document.getElementById("btnBn").classList.toggle("active", lang === "bn");
+
+    const mins = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+    const secs = String(totalSeconds % 60).padStart(2, "0");
+    const timeStr = `${mins}:${secs}`;
+
+    if (lang === "en") {
+      document.getElementById("lblRepayAmount").textContent = "Repayment Amount";
+      document.getElementById("noticeLine").innerHTML = `Please pay and upload your payment receipt within <span class="time-highlight" id="inlineTimer">${timeStr}</span>.`;
+      document.getElementById("lblClickView").textContent = "Click to view repayment account";
+      document.getElementById("lblStep1").innerHTML = `This account is only for repayment <span class="pink-highlight">bKash Send Money Only</span>`;
+      document.getElementById("lblAccSub").innerHTML = `Repayment Account <span class="pink-highlight">(bKash Send Money Only)</span>`;
+      document.getElementById("btnCopy").textContent = "Copy";
+      document.getElementById("lblStep2").innerHTML = `Enter the TrxID <span class="red-required">(Required)</span>`;
+      document.getElementById("trxInput").placeholder = "Please enter the TrxID!";
+      document.getElementById("lblUploadDesc").textContent = "Please provide a screenshot or photo of the transfer record shown below";
+      document.getElementById("btnSubmit").textContent = "Submit";
+      document.getElementById("lblProcessTitle").textContent = "Repayment Process";
+      document.getElementById("processList").innerHTML = `
+        <li><span class="process-num">1.</span><span>Copy the repayment account number and make the payment.</span></li>
+        <li><span class="process-num">2.</span><span>Log in to your mobile banking app.</span></li>
+        <li><span class="process-num">3.</span><span>Confirm whether to send the payment via <span class="orange-highlight">"bKash Send Money Only"</span>, then enter the account number and amount above.</span></li>
+        <li><span class="process-num">4.</span><span>Save your TrxID and transfer receipt/screenshot, then enter and upload them here.</span></li>
+        <li><span class="process-num">5.</span><span>Confirm the transaction and wait for your loan status to be updated.</span></li>
+      `;
+    } else {
+      document.getElementById("lblRepayAmount").textContent = "পরিশোধের পরিমাণ";
+      document.getElementById("noticeLine").innerHTML = `অনুগ্রহ করে <span class="time-highlight" id="inlineTimer">${timeStr}</span> এর মধ্যে পেমেন্ট করুন এবং রসিদ আপলোড করুন।`;
+      document.getElementById("lblClickView").textContent = "পরিশোধের অ্যাকাউন্ট দেখতে ক্লিক করুন";
+      document.getElementById("lblStep1").innerHTML = `এই অ্যাকাউন্টটি শুধুমাত্র <span class="pink-highlight">bKash Send Money Only</span> পরিশোধের জন্য`;
+      document.getElementById("lblAccSub").innerHTML = `পরিশোধের অ্যাকাউন্ট <span class="pink-highlight">(bKash Send Money Only)</span>`;
+      document.getElementById("btnCopy").textContent = "কপি";
+      document.getElementById("lblStep2").innerHTML = `TrxID লিখুন <span class="red-required">(প্রয়োজনীয়)</span>`;
+      document.getElementById("trxInput").placeholder = "অনুগ্রহ করে TrxID লিখুন!";
+      document.getElementById("lblUploadDesc").textContent = "নিচে দেখানো ট্রান্সফার রেকর্ডের একটি স্ক্রিনশট বা ছবি প্রদান করুন";
+      document.getElementById("btnSubmit").textContent = "জমা দিন";
+      document.getElementById("lblProcessTitle").textContent = "পরিশোধ প্রক্রিয়া";
+      document.getElementById("processList").innerHTML = `
+        <li><span class="process-num">১.</span><span>পরিশোধের অ্যাকাউন্ট নম্বরটি কপি করুন এবং পেমেন্ট সম্পন্ন করুন।</span></li>
+        <li><span class="process-num">২.</span><span>আপনার মোবাইল ব্যাংকিং অ্যাপে লগ ইন করুন।</span></li>
+        <li><span class="process-num">৩.</span><span><span class="orange-highlight">"bKash Send Money Only"</span> এর মাধ্যমে পেমেন্ট পাঠাবেন কিনা তা নিশ্চিত করুন, তারপর উপরের অ্যাকাউন্ট নম্বর এবং পরিমাণ লিখুন।</span></li>
+        <li><span class="process-num">৪.</span><span>আপনার TrxID এবং ট্রান্সফার রসিদ/স্ক্রিনশট সংরক্ষণ করুন, তারপর এখানে লিখুন এবং আপলোড করুন।</span></li>
+        <li><span class="process-num">৫.</span><span>লেনদেনটি নিশ্চিত করুন এবং আপনার লোনের স্ট্যাটাস আপডেট হওয়ার জন্য অপেক্ষা করুন।</span></li>
+      `;
+    }
+  }
+
+  function openSelectedModal() {
+    document.getElementById("selectedModal").classList.add("active");
+  }
+
+  function goToRepay() {
+    document.getElementById("selectedModal").classList.remove("active");
+    document.getElementById("stage1Card").classList.add("hidden");
+    document.getElementById("stage3Card").classList.remove("hidden");
+  }
+
+  function openReuploadModal() {
+    document.getElementById("selectedModal").classList.remove("active");
+    document.getElementById("reuploadModal").classList.add("active");
+  }
+
+  function closeReuploadModal() {
+    document.getElementById("reuploadModal").classList.remove("active");
+    document.getElementById("selectedModal").classList.add("active");
+  }
+
+  function copyFullAccount() {
+    navigator.clipboard.writeText(PORTAL_CONFIG.bkashNumber);
+    document.getElementById("copySuccessModal").classList.add("active");
+  }
+
+  function closeCopyModal() {
+    document.getElementById("copySuccessModal").classList.remove("active");
+  }
+
+  function openExampleModal() {
+    document.getElementById("exampleModal").classList.add("active");
+  }
+
+  function closeExampleModal() {
+    document.getElementById("exampleModal").classList.remove("active");
+  }
+
+  // রিয়েলিস্টিক TrxID ভ্যালিডেশন (ঠিক ১০ ডিজিট, ভেতরে বড় হাতের অক্ষর ও সংখ্যা থাকতে হবে)
+  function isValidBkashTrxId(trx) {
+    const clean = trx.trim();
+    const isTenChars = /^[A-Z0-9]{10}$/.test(clean);
+    const hasLetters = /[A-Z]/.test(clean);
+    const hasNumbers = /[0-9]/.test(clean);
+    return isTenChars && hasLetters && hasNumbers;
+  }
+
+  function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      uploadedReceiptData = e.target.result;
+      const img = document.getElementById("previewImg");
+      img.src = uploadedReceiptData;
+      img.classList.remove("hidden");
+      document.getElementById("plusIcon").classList.add("hidden");
+      validateForm();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function validateForm() {
+    const trxVal = document.getElementById("trxInput").value.trim().toUpperCase();
+    const errorEl = document.getElementById("trxError");
+    const submitBtn = document.getElementById("btnSubmit");
+
+    const validTrx = isValidBkashTrxId(trxVal);
+
+    if (trxVal.length > 0 && !validTrx) {
+      errorEl.style.display = "block";
+    } else {
+      errorEl.style.display = "none";
+    }
+
+    if (validTrx) {
+      submitBtn.disabled = false;
+      submitBtn.classList.add("ready");
+    } else {
+      submitBtn.disabled = true;
+      submitBtn.classList.remove("ready");
+    }
+  }
+
+  function submitRepayment() {
+    const trxId = document.getElementById("trxInput").value.trim().toUpperCase();
+    const record = {
+      channel: "bKash",
+      account: PORTAL_CONFIG.bkashNumber,
+      amount: PORTAL_CONFIG.amount,
+      trxId: trxId,
+      timestamp: new Date().toISOString()
+    };
+    const history = JSON.parse(localStorage.getItem("repayment_records") || "[]");
+    history.push(record);
+    localStorage.setItem("repayment_records", JSON.stringify(history));
+
+    document.getElementById("finalSuccessModal").classList.add("active");
+  }
+
+  function handleReuploadFile(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      reuploadReceiptData = e.target.result;
+      const img = document.getElementById("reuploadPreview");
+      img.src = reuploadReceiptData;
+      img.classList.remove("hidden");
+      document.getElementById("reuploadPlus").classList.add("hidden");
+      validateReupload();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function validateReupload() {
+    const trxVal = document.getElementById("reuploadTrx").value.trim().toUpperCase();
+    const btn = document.getElementById("btnReuploadSubmit");
+    if (isValidBkashTrxId(trxVal)) {
+      btn.disabled = false;
+      btn.classList.add("ready");
+    } else {
+      btn.disabled = true;
+      btn.classList.remove("ready");
+    }
+  }
+
+  function submitReupload() {
+    document.getElementById("reuploadModal").classList.remove("active");
+    document.getElementById("finalSuccessModal").classList.add("active");
+  }
+
+  initPortal();
+</script>
+
+</body>
+</html>
